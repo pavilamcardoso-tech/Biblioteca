@@ -4,103 +4,73 @@ namespace App\Http\Controllers;
 
 use App\Models\Emprestimo;
 use App\Models\Livro;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class EmprestimoController extends Controller
 {
-    // GET /api/emprestimos
-    // Lista todos os empréstimos
     public function index()
     {
-        return Emprestimo::with(['usuario', 'livro'])->get();
+        return Emprestimo::with(['livro', 'leitor'])->get();
     }
 
-    // POST /api/emprestimos
-    // Cria um novo empréstimo
     public function store(Request $request)
     {
         $dados = $request->validate([
-            'user_id' => 'required|exists:users,id',
             'livro_id' => 'required|exists:livros,id',
+            'leitor_id' => 'required|exists:leitores,id',
+            'data_prevista_devolucao' => 'required|date|after_or_equal:today',
         ]);
 
         $livro = Livro::findOrFail($dados['livro_id']);
 
-        // Verifica se existem exemplares disponíveis
-        if ($livro->quantidade_disponivel <= 0) {
+        if ($livro->quantidade_disponivel < 1) {
             return response()->json([
-                'mensagem' => 'Este livro não está disponível para empréstimo.'
+                'mensagem' => 'Não há exemplares disponíveis deste livro no momento.',
             ], 422);
         }
 
-        $emprestimo = DB::transaction(function () use ($dados, $livro) {
+        $emprestimo = Emprestimo::create([
+            'livro_id' => $dados['livro_id'],
+            'leitor_id' => $dados['leitor_id'],
+            'data_emprestimo' => now()->toDateString(),
+            'data_prevista_devolucao' => $dados['data_prevista_devolucao'],
+        ]);
 
-            $emprestimo = Emprestimo::create([
-                'user_id' => $dados['user_id'],
-                'livro_id' => $dados['livro_id'],
-                'data_emprestimo' => now(),
-                'status' => 'emprestado',
-            ]);
+        $livro->decrement('quantidade_disponivel');
 
-            // Diminui a quantidade disponível
-            $livro->decrement('quantidade_disponivel');
-
-            return $emprestimo;
-        });
-
-        return response()->json(
-            $emprestimo->load(['usuario', 'livro']),
-            201
-        );
+        return response()->json($emprestimo->load(['livro', 'leitor']), 201);
     }
 
-    // GET /api/emprestimos/{emprestimo}
-    // Mostra um empréstimo específico
     public function show(Emprestimo $emprestimo)
     {
-        return $emprestimo->load(['usuario', 'livro']);
+        return $emprestimo->load(['livro', 'leitor']);
     }
 
-    // PUT/PATCH /api/emprestimos/{emprestimo}
-    // Atualiza um empréstimo
-    public function update(Request $request, Emprestimo $emprestimo)
+    public function devolver(Emprestimo $emprestimo)
     {
-        $dados = $request->validate([
-            'status' => 'required|in:emprestado,devolvido',
-        ]);
-
-        // Se o livro ainda está emprestado e está sendo devolvido
-        if (
-            $emprestimo->status === 'emprestado' &&
-            $dados['status'] === 'devolvido'
-        ) {
-            DB::transaction(function () use ($emprestimo) {
-
-                $emprestimo->update([
-                    'status' => 'devolvido',
-                    'data_devolucao' => now(),
-                ]);
-
-                // Devolve o exemplar para o estoque
-                $emprestimo->livro->increment('quantidade_disponivel');
-            });
+        if ($emprestimo->data_devolucao) {
+            return response()->json([
+                'mensagem' => 'Este empréstimo já foi devolvido.',
+            ], 422);
         }
 
-        return response()->json(
-            $emprestimo->fresh()->load(['usuario', 'livro'])
-        );
+        $emprestimo->update([
+            'data_devolucao' => now()->toDateString(),
+        ]);
+
+        $emprestimo->livro->increment('quantidade_disponivel');
+
+        return response()->json($emprestimo->load(['livro', 'leitor']));
     }
 
-    // DELETE /api/emprestimos/{emprestimo}
-    // Remove um empréstimo
     public function destroy(Emprestimo $emprestimo)
     {
+        if (!$emprestimo->data_devolucao) {
+            $emprestimo->livro->increment('quantidade_disponivel');
+        }
+
         $emprestimo->delete();
 
-        return response()->json([
-            'mensagem' => 'Empréstimo removido com sucesso.'
-        ]);
+        return response()->json(['mensagem' => 'Empréstimo removido com sucesso']);
     }
 }

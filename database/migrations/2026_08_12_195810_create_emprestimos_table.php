@@ -10,21 +10,11 @@ return new class extends Migration
     {
         Schema::create('emprestimos', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->onDelete('cascade');
-
-            $table->foreignId('livro_id')
-                ->constrained('livros')
-                ->onDelete('cascade');
-
+            $table->foreignId('livro_id')->constrained('livros')->onDelete('cascade');
+            $table->foreignId('leitor_id')->constrained('leitores')->onDelete('cascade');
             $table->date('data_emprestimo');
-
+            $table->date('data_prevista_devolucao');
             $table->date('data_devolucao')->nullable();
-
-            $table->string('status')->default('emprestado');
-
             $table->timestamps();
         });
     }
