@@ -1,158 +1,92 @@
-# 📚 Sistema de Biblioteca
+# Sistema de Biblioteca
 
-Sistema de gerenciamento de biblioteca desenvolvido como projeto acadêmico, utilizando **Laravel** e **MySQL**.
+Sistema de gestão de acervo para bibliotecas, com controle de livros, leitores e empréstimos.
 
-O projeto tem como objetivo permitir o gerenciamento de livros, usuários e empréstimos, oferecendo uma API REST para realizar as operações do sistema.
+## Tecnologias
 
-## 🚀 Tecnologias
+**Backend**
+- PHP 8.2
+- Laravel 12
+- MySQL
 
-* **PHP 8.2**
-* **Laravel 12**
-* **MySQL**
-* **Composer**
-* **Laravel Eloquent**
-* **REST API**
-* **Git e GitHub**
+**Frontend**
+- React
+- Vite
+- Axios
 
-## 📌 Funcionalidades
+## Funcionalidades
 
-### 📖 Livros
+- Cadastro, edição, exclusão e listagem de livros
+- Cadastro, edição, exclusão e listagem de leitores
+- Registro de empréstimos, com controle automático de quantidade disponível
+- Registro de devoluções
+- Bloqueio de empréstimo quando não há exemplares disponíveis
 
-* Cadastro de livros
-* Listagem de livros
-* Visualização de um livro
-* Edição de livros
-* Exclusão de livros
-* Controle da quantidade total de exemplares
-* Controle da quantidade disponível
+## Estrutura do projeto
 
-### 👤 Usuários
+biblioteca/
+├── app/ Backend Laravel (Models, Controllers)
+├── database/migrations/ Migrations do banco de dados
+├── routes/api.php Rotas da API
+└── frontend/ Frontend React
+└── src/
+├── components/ Componentes de tela (formulários e listas)
+└── services/ Configuração do Axios (conexão com a API)
 
-Utilização do sistema de usuários padrão do Laravel, com informações como:
 
-* Nome
-* E-mail
-* Senha
+## Como rodar o projeto localmente
 
-### 📚 Empréstimos
+O projeto tem duas partes que precisam rodar ao mesmo tempo, em terminais separados.
 
-O sistema está sendo desenvolvido para permitir:
-
-* Registrar empréstimos
-* Relacionar usuários e livros
-* Verificar a disponibilidade do livro
-* Diminuir automaticamente a quantidade disponível
-* Registrar devoluções
-* Aumentar novamente a quantidade disponível
-* Controlar o status do empréstimo
-
-## 🗂️ Estrutura do projeto
-
-```text
-BIBLIOTECA/
-├── app/
-│   ├── Http/
-│   │   └── Controllers/
-│   └── Models/
-├── database/
-│   └── migrations/
-├── routes/
-│   └── api.php
-├── resources/
-├── public/
-├── config/
-├── .env.example
-├── artisan
-├── composer.json
-└── package.json
-```
-
-## 🔌 API
-
-Atualmente, a API possui endpoints para gerenciamento de livros e empréstimos.
-
-### Livros
-
-```text
-GET     /api/livros
-POST    /api/livros
-GET     /api/livros/{id}
-PUT     /api/livros/{id}
-DELETE  /api/livros/{id}
-```
-
-### Empréstimos
-
-```text
-GET     /api/emprestimos
-POST    /api/emprestimos
-GET     /api/emprestimos/{id}
-PUT     /api/emprestimos/{id}
-DELETE  /api/emprestimos/{id}
-```
-
-## ⚙️ Como executar o projeto
-
-Clone o repositório:
+### 1. Backend (Laravel)
 
 ```bash
-git clone URL_DO_REPOSITORIO
-```
-
-Entre na pasta:
-
-```bash
-cd BIBLIOTECA
-```
-
-Instale as dependências do PHP:
-
-```bash
+cd biblioteca
 composer install
-```
-
-Crie o arquivo `.env`:
-
-```bash
-copy .env.example .env
-```
-
-Gere a chave da aplicação:
-
-```bash
+cp .env.example .env
 php artisan key:generate
 ```
 
-Configure as informações do banco de dados no arquivo `.env`.
-
-Execute as migrations:
+Configure as credenciais do banco de dados MySQL no arquivo `.env`, depois rode as migrations:
 
 ```bash
 php artisan migrate
 ```
 
-Inicie o servidor Laravel:
+Inicie o servidor:
 
 ```bash
 php artisan serve
 ```
 
-O projeto ficará disponível em:
+A API estará disponível em `http://127.0.0.1:8000`.
 
-```text
-http://127.0.0.1:8000
+### 2. Frontend (React)
+
+Em outro terminal:
+
+```bash
+cd biblioteca/frontend
+npm install
+npm run dev
 ```
 
-## 🛠️ Status do projeto
+O sistema estará disponível em `http://localhost:5173`.
 
-🚧 **Em desenvolvimento**
+## Rotas da API
 
-O projeto está sendo desenvolvido gradualmente, com implementação do gerenciamento de livros, usuários e empréstimos.
-
-## 🎯 Objetivo
-
-Este projeto foi desenvolvido com o objetivo de praticar conceitos de **desenvolvimento backend, APIs REST, Laravel, banco de dados relacionais, migrations, Eloquent ORM e arquitetura de aplicações web**.
-
----
-
-Desenvolvido como projeto acadêmico. 📚💻
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/api/livros` | Lista todos os livros |
+| POST | `/api/livros` | Cadastra um novo livro |
+| GET | `/api/livros/{id}` | Detalhes de um livro |
+| PUT | `/api/livros/{id}` | Atualiza um livro |
+| DELETE | `/api/livros/{id}` | Remove um livro |
+| GET | `/api/leitores` | Lista todos os leitores |
+| POST | `/api/leitores` | Cadastra um novo leitor |
+| PUT | `/api/leitores/{id}` | Atualiza um leitor |
+| DELETE | `/api/leitores/{id}` | Remove um leitor |
+| GET | `/api/emprestimos` | Lista todos os empréstimos |
+| POST | `/api/emprestimos` | Registra um novo empréstimo |
+| PATCH | `/api/emprestimos/{id}/devolver` | Registra a devolução |
+| DELETE | `/api/emprestimos/{id}` | Remove um empréstimo |

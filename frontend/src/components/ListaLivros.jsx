@@ -44,9 +44,7 @@ function ListaLivros({ livros, aoAtualizar, aoExcluir }) {
     if (!confirmar) return;
 
     api.delete(`/livros/${id}`)
-      .then(() => {
-        aoExcluir(id);
-      })
+      .then(() => aoExcluir(id))
       .catch((error) => {
         console.error(error);
         alert('Erro ao excluir livro.');
@@ -55,9 +53,9 @@ function ListaLivros({ livros, aoAtualizar, aoExcluir }) {
 
   return (
     <div>
-      <h1>Livros cadastrados</h1>
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
-      <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', width: '100%' }}>
+      <h1 className="app-title" style={{ fontSize: '1.4rem', marginBottom: '1.25rem' }}>Acervo</h1>
+      {erro && <p className="error-msg">{erro}</p>}
+      <table className="data-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -65,7 +63,7 @@ function ListaLivros({ livros, aoAtualizar, aoExcluir }) {
             <th>Autor</th>
             <th>ISBN</th>
             <th>Total</th>
-            <th>Disponível</th>
+            <th>Status</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -75,49 +73,31 @@ function ListaLivros({ livros, aoAtualizar, aoExcluir }) {
               {editandoId === livro.id ? (
                 <>
                   <td>{livro.id}</td>
-                  <td>
-                    <input
-                      value={dadosEdicao.titulo}
-                      onChange={(e) => setDadosEdicao({ ...dadosEdicao, titulo: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      value={dadosEdicao.autor}
-                      onChange={(e) => setDadosEdicao({ ...dadosEdicao, autor: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      value={dadosEdicao.isbn}
-                      onChange={(e) => setDadosEdicao({ ...dadosEdicao, isbn: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      min="1"
-                      value={dadosEdicao.quantidade_total}
-                      onChange={(e) => setDadosEdicao({ ...dadosEdicao, quantidade_total: e.target.value })}
-                    />
-                  </td>
-                  <td>{livro.quantidade_disponivel}</td>
-                  <td>
-                    <button onClick={() => salvarEdicao(livro.id)}>Salvar</button>
-                    <button onClick={cancelarEdicao}>Cancelar</button>
+                  <td><input className="table-input" value={dadosEdicao.titulo} onChange={(e) => setDadosEdicao({ ...dadosEdicao, titulo: e.target.value })} /></td>
+                  <td><input className="table-input" value={dadosEdicao.autor} onChange={(e) => setDadosEdicao({ ...dadosEdicao, autor: e.target.value })} /></td>
+                  <td><input className="table-input" value={dadosEdicao.isbn} onChange={(e) => setDadosEdicao({ ...dadosEdicao, isbn: e.target.value })} /></td>
+                  <td><input className="table-input" type="number" min="1" value={dadosEdicao.quantidade_total} onChange={(e) => setDadosEdicao({ ...dadosEdicao, quantidade_total: e.target.value })} /></td>
+                  <td>{livro.quantidade_disponivel} disp.</td>
+                  <td className="actions-cell">
+                    <button className="btn btn-primary btn-small" onClick={() => salvarEdicao(livro.id)}>Salvar</button>
+                    <button className="btn btn-secondary btn-small" onClick={cancelarEdicao}>Cancelar</button>
                   </td>
                 </>
               ) : (
                 <>
                   <td>{livro.id}</td>
-                  <td>{livro.titulo}</td>
-                  <td>{livro.autor}</td>
+                  <td className="col-text">{livro.titulo}</td>
+                  <td className="col-text">{livro.autor}</td>
                   <td>{livro.isbn}</td>
                   <td>{livro.quantidade_total}</td>
-                  <td>{livro.quantidade_disponivel}</td>
                   <td>
-                    <button onClick={() => iniciarEdicao(livro)}>Editar</button>
-                    <button onClick={() => excluirLivro(livro.id)}>Excluir</button>
+                    <span className={`badge ${livro.quantidade_disponivel > 0 ? 'badge-available' : 'badge-unavailable'}`}>
+                      {livro.quantidade_disponivel > 0 ? `${livro.quantidade_disponivel} disponível` : 'indisponível'}
+                    </span>
+                  </td>
+                  <td className="actions-cell">
+                    <button className="btn btn-secondary btn-small" onClick={() => iniciarEdicao(livro)}>Editar</button>
+                    <button className="btn btn-danger btn-small" onClick={() => excluirLivro(livro.id)}>Excluir</button>
                   </td>
                 </>
               )}

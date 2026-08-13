@@ -33,29 +33,33 @@ function FormularioLeitor({ aoCadastrar }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
+    <form onSubmit={handleSubmit} className="card-form">
       <h2>Cadastrar novo leitor</h2>
 
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
+      {erro && <p className="error-msg">{erro}</p>}
 
-      <div>
-        <label>Nome: </label>
-        <input value={nome} onChange={(e) => setNome(e.target.value)} required />
+      <div className="form-fields">
+        <div className="form-row">
+          <label>Nome</label>
+          <input value={nome} onChange={(e) => setNome(e.target.value)} required />
+        </div>
+
+        <div className="form-row">
+          <label>Email</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+
+        <div className="form-row">
+          <label>Telefone</label>
+          <input value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+        </div>
       </div>
 
-      <div>
-        <label>Email: </label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <div className="form-actions">
+        <button type="submit" className="btn btn-primary" disabled={enviando}>
+          {enviando ? 'Cadastrando...' : 'Cadastrar'}
+        </button>
       </div>
-
-      <div>
-        <label>Telefone: </label>
-        <input value={telefone} onChange={(e) => setTelefone(e.target.value)} />
-      </div>
-
-      <button type="submit" disabled={enviando}>
-        {enviando ? 'Cadastrando...' : 'Cadastrar'}
-      </button>
     </form>
   );
 }

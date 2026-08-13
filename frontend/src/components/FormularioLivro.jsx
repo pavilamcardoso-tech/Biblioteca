@@ -40,40 +40,44 @@ function FormularioLivro({ aoCadastrar }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
+    <form onSubmit={handleSubmit} className="card-form">
       <h2>Cadastrar novo livro</h2>
 
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
+      {erro && <p className="error-msg">{erro}</p>}
 
-      <div>
-        <label>Título: </label>
-        <input value={titulo} onChange={(e) => setTitulo(e.target.value)} required />
+      <div className="form-fields">
+        <div className="form-row">
+          <label>Título</label>
+          <input value={titulo} onChange={(e) => setTitulo(e.target.value)} required />
+        </div>
+
+        <div className="form-row">
+          <label>Autor</label>
+          <input value={autor} onChange={(e) => setAutor(e.target.value)} required />
+        </div>
+
+        <div className="form-row">
+          <label>ISBN</label>
+          <input value={isbn} onChange={(e) => setIsbn(e.target.value)} required />
+        </div>
+
+        <div className="form-row">
+          <label>Quantidade total</label>
+          <input
+            type="number"
+            min="1"
+            value={quantidadeTotal}
+            onChange={(e) => setQuantidadeTotal(e.target.value)}
+            required
+          />
+        </div>
       </div>
 
-      <div>
-        <label>Autor: </label>
-        <input value={autor} onChange={(e) => setAutor(e.target.value)} required />
+      <div className="form-actions">
+        <button type="submit" className="btn btn-primary" disabled={enviando}>
+          {enviando ? 'Cadastrando...' : 'Cadastrar'}
+        </button>
       </div>
-
-      <div>
-        <label>ISBN: </label>
-        <input value={isbn} onChange={(e) => setIsbn(e.target.value)} required />
-      </div>
-
-      <div>
-        <label>Quantidade total: </label>
-        <input
-          type="number"
-          min="1"
-          value={quantidadeTotal}
-          onChange={(e) => setQuantidadeTotal(e.target.value)}
-          required
-        />
-      </div>
-
-      <button type="submit" disabled={enviando}>
-        {enviando ? 'Cadastrando...' : 'Cadastrar'}
-      </button>
     </form>
   );
 }

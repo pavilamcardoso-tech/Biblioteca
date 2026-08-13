@@ -3,9 +3,7 @@ import api from '../services/api';
 function ListaEmprestimos({ emprestimos, aoDevolver }) {
   function devolver(id) {
     api.patch(`/emprestimos/${id}/devolver`)
-      .then((response) => {
-        aoDevolver(response.data);
-      })
+      .then((response) => aoDevolver(response.data))
       .catch((error) => {
         console.error(error);
         alert('Erro ao registrar devolução.');
@@ -14,8 +12,8 @@ function ListaEmprestimos({ emprestimos, aoDevolver }) {
 
   return (
     <div>
-      <h1>Empréstimos</h1>
-      <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', width: '100%' }}>
+      <h1 className="app-title" style={{ fontSize: '1.4rem', marginBottom: '1.25rem' }}>Empréstimos</h1>
+      <table className="data-table">
         <thead>
           <tr>
             <th>Livro</th>
@@ -29,14 +27,22 @@ function ListaEmprestimos({ emprestimos, aoDevolver }) {
         <tbody>
           {emprestimos.map((emp) => (
             <tr key={emp.id}>
-              <td>{emp.livro?.titulo}</td>
-              <td>{emp.leitor?.nome}</td>
+              <td className="col-text">{emp.livro?.titulo}</td>
+              <td className="col-text">{emp.leitor?.nome}</td>
               <td>{emp.data_emprestimo}</td>
               <td>{emp.data_prevista_devolucao}</td>
-              <td>{emp.data_devolucao || '—'}</td>
+              <td>
+                {emp.data_devolucao ? (
+                  <span className="badge badge-returned">devolvido em {emp.data_devolucao}</span>
+                ) : (
+                  '—'
+                )}
+              </td>
               <td>
                 {!emp.data_devolucao && (
-                  <button onClick={() => devolver(emp.id)}>Marcar como devolvido</button>
+                  <button className="btn btn-secondary btn-small" onClick={() => devolver(emp.id)}>
+                    Marcar como devolvido
+                  </button>
                 )}
               </td>
             </tr>

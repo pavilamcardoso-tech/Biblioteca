@@ -39,48 +39,52 @@ function FormularioEmprestimo({ livros, leitores, aoCadastrar }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
+    <form onSubmit={handleSubmit} className="card-form">
       <h2>Registrar novo empréstimo</h2>
 
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
+      {erro && <p className="error-msg">{erro}</p>}
 
-      <div>
-        <label>Livro: </label>
-        <select value={livroId} onChange={(e) => setLivroId(e.target.value)} required>
-          <option value="">Selecione um livro</option>
-          {livros.map((livro) => (
-            <option key={livro.id} value={livro.id} disabled={livro.quantidade_disponivel < 1}>
-              {livro.titulo} ({livro.quantidade_disponivel} disponível{livro.quantidade_disponivel !== 1 ? 'is' : ''})
-            </option>
-          ))}
-        </select>
+      <div className="form-fields">
+        <div className="form-row">
+          <label>Livro</label>
+          <select value={livroId} onChange={(e) => setLivroId(e.target.value)} required>
+            <option value="">Selecione um livro</option>
+            {livros.map((livro) => (
+              <option key={livro.id} value={livro.id} disabled={livro.quantidade_disponivel < 1}>
+                {livro.titulo} ({livro.quantidade_disponivel} {livro.quantidade_disponivel === 1 ? 'disponível' : 'disponíveis'})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-row">
+          <label>Leitor</label>
+          <select value={leitorId} onChange={(e) => setLeitorId(e.target.value)} required>
+            <option value="">Selecione um leitor</option>
+            {leitores.map((leitor) => (
+              <option key={leitor.id} value={leitor.id}>
+                {leitor.nome}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-row">
+          <label>Data prevista de devolução</label>
+          <input
+            type="date"
+            value={dataPrevista}
+            onChange={(e) => setDataPrevista(e.target.value)}
+            required
+          />
+        </div>
       </div>
 
-      <div>
-        <label>Leitor: </label>
-        <select value={leitorId} onChange={(e) => setLeitorId(e.target.value)} required>
-          <option value="">Selecione um leitor</option>
-          {leitores.map((leitor) => (
-            <option key={leitor.id} value={leitor.id}>
-              {leitor.nome}
-            </option>
-          ))}
-        </select>
+      <div className="form-actions">
+        <button type="submit" className="btn btn-primary" disabled={enviando}>
+          {enviando ? 'Registrando...' : 'Registrar empréstimo'}
+        </button>
       </div>
-
-      <div>
-        <label>Data prevista de devolução: </label>
-        <input
-          type="date"
-          value={dataPrevista}
-          onChange={(e) => setDataPrevista(e.target.value)}
-          required
-        />
-      </div>
-
-      <button type="submit" disabled={enviando}>
-        {enviando ? 'Registrando...' : 'Registrar empréstimo'}
-      </button>
     </form>
   );
 }

@@ -43,9 +43,7 @@ function ListaLeitores({ leitores, aoAtualizar, aoExcluir }) {
     if (!confirmar) return;
 
     api.delete(`/leitores/${id}`)
-      .then(() => {
-        aoExcluir(id);
-      })
+      .then(() => aoExcluir(id))
       .catch((error) => {
         console.error(error);
         alert('Erro ao excluir leitor.');
@@ -54,9 +52,9 @@ function ListaLeitores({ leitores, aoAtualizar, aoExcluir }) {
 
   return (
     <div>
-      <h1>Leitores cadastrados</h1>
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
-      <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', width: '100%' }}>
+      <h1 className="app-title" style={{ fontSize: '1.4rem', marginBottom: '1.25rem' }}>Leitores cadastrados</h1>
+      {erro && <p className="error-msg">{erro}</p>}
+      <table className="data-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -72,38 +70,23 @@ function ListaLeitores({ leitores, aoAtualizar, aoExcluir }) {
               {editandoId === leitor.id ? (
                 <>
                   <td>{leitor.id}</td>
-                  <td>
-                    <input
-                      value={dadosEdicao.nome}
-                      onChange={(e) => setDadosEdicao({ ...dadosEdicao, nome: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      value={dadosEdicao.email}
-                      onChange={(e) => setDadosEdicao({ ...dadosEdicao, email: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      value={dadosEdicao.telefone}
-                      onChange={(e) => setDadosEdicao({ ...dadosEdicao, telefone: e.target.value })}
-                    />
-                  </td>
-                  <td>
-                    <button onClick={() => salvarEdicao(leitor.id)}>Salvar</button>
-                    <button onClick={cancelarEdicao}>Cancelar</button>
+                  <td><input className="table-input" value={dadosEdicao.nome} onChange={(e) => setDadosEdicao({ ...dadosEdicao, nome: e.target.value })} /></td>
+                  <td><input className="table-input" value={dadosEdicao.email} onChange={(e) => setDadosEdicao({ ...dadosEdicao, email: e.target.value })} /></td>
+                  <td><input className="table-input" value={dadosEdicao.telefone} onChange={(e) => setDadosEdicao({ ...dadosEdicao, telefone: e.target.value })} /></td>
+                  <td className="actions-cell">
+                    <button className="btn btn-primary btn-small" onClick={() => salvarEdicao(leitor.id)}>Salvar</button>
+                    <button className="btn btn-secondary btn-small" onClick={cancelarEdicao}>Cancelar</button>
                   </td>
                 </>
               ) : (
                 <>
                   <td>{leitor.id}</td>
-                  <td>{leitor.nome}</td>
-                  <td>{leitor.email}</td>
+                  <td className="col-text">{leitor.nome}</td>
+                  <td className="col-text">{leitor.email}</td>
                   <td>{leitor.telefone}</td>
-                  <td>
-                    <button onClick={() => iniciarEdicao(leitor)}>Editar</button>
-                    <button onClick={() => excluirLeitor(leitor.id)}>Excluir</button>
+                  <td className="actions-cell">
+                    <button className="btn btn-secondary btn-small" onClick={() => iniciarEdicao(leitor)}>Editar</button>
+                    <button className="btn btn-danger btn-small" onClick={() => excluirLeitor(leitor.id)}>Excluir</button>
                   </td>
                 </>
               )}
